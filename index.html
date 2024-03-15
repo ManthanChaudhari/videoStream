@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtube</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="util.css">
+    <script defer src="https://kit.fontawesome.com/c0b1921ddf.js" crossorigin="anonymous"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div id="progressBar"></div>
+    <div class="container">
+        <header>
+            <nav>
+                <a href = "#" class="brand">Youtube</a>
+            <div class="navItems">
+                    <input type="search" class="searchVid" placeholder="Search Videos"/>
+                <div class="lists">
+                <ul class="listItems">       
+                    <li class="home menu"><i class="fa-solid fa-house fa-lg itag icon"></i> <span>Home</span></li>
+                    <li class="menu"><i class="fa-regular fa-clock fa-lg itag icon"></i> <span>Watch Later</span></li>
+                    <li class="menu"><i class="fa-solid fa-thumbs-up fa-lg itag icon"></i> <span>Playlists</span></li>
+                    <li class="menu theme"><i class="fa-solid fa-moon  fa-lg icon"></i> <span>Theme</span></li>
+                </ul>
+            </div>
+            </div>
+            </nav>
+        </header>
+        <main>
+        </main>
+    </div>
+    <div class="loader-div">
+        <p class="loader"></p>
+    </div>
+</body>
+</html>
+
+<template id = "template-card">
+    <div class="card">
+        <div class="thumbnail">
+            <img src="demo.webp" alt="yt-video" class="thumbImage"/>
+            <span class="timestamp">12:30</span>
+        </div>
+        <div class="meta-data">
+            <div class="left-data">
+                <img src="logo.jpg" class="channelLogo"/>
+            </div>
+            <div class="right-data">
+                <p class="title">$1 vs $250,000,000 Private Island!</p>
+                <p class="channel-name">Mr Beast</p>
+            </div>
+            <div class="menu">
+                <span></span>
+            </div>
+        </div>
+    </div>
+</template>
