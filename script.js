@@ -1,9 +1,11 @@
 const progressBar = document.querySelector("#progressBar");
+const searchInput = document.querySelector(".searchVid");
 const themeList = document.querySelector(".theme");
 const homeList = document.querySelector(".home");
 const homeIcon = homeList.querySelector("i");
 const homeSpan = homeList.querySelector("span");
 const container = document.querySelector(".container");
+let playlist = [];
 const url = "https://yt-api.p.rapidapi.com/search?query=";
 let data = [];
 const options = {
@@ -13,25 +15,34 @@ const options = {
     "X-RapidAPI-Host": "yt-api.p.rapidapi.com",
   },
 };
-const searchInput = document.querySelector(".searchVid");
-
-searchInput.addEventListener("keydown" , handleSearch);
-function handleSearch(e){
-  try{
-    if(e.key === "Enter" && searchInput.value.length > 1){
-    let getInputValue = searchInput.value;
-    setTimeout(() => {
-    homeIcon.classList.add("active");
-    homeSpan.classList.add("active");
-    fetchData(getInputValue);
-  },500);
+// Debounce Code : 
+const debounce = (func, delay) => {
+  let timeout;
+  return function (...args) {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+          func.apply(context, args);
+      }, delay);
+  };
+};
+//handle operations
+function handleSearch(e) {
+  try {
+    if (e.key === "Enter" && searchInput.value.length > 1) {
+      let getInputValue = searchInput.value;
+      setTimeout(() => {
+        homeIcon.classList.add("active");
+        homeSpan.classList.add("active");
+        fetchData(getInputValue);
+      }, 500);
     }
-  }
-  catch(error){
+  } catch (error) {
     alert("Some Error Occured , Try after some time");
-    console.log("searchInput : " , error.message);
+    console.log("searchInput : ", error.message);
   }
 }
+searchInput.addEventListener("keydown", handleSearch);
 
 // Button Functionalities :
 function handleHomeClick() {
@@ -60,8 +71,10 @@ function handleThemeMode() {
 themeList.addEventListener("click", handleThemeMode);
 
 
-// Scroll Event
-window.addEventListener("scroll",  () => {
+
+// Scroll Events : 
+
+window.addEventListener("scroll", () => {
   const scrolledFromTop =
     document.body.scrollTop || document.documentElement.scrollTop;
   // scrollHeight gives the height of the content present in the body node
@@ -75,7 +88,7 @@ window.addEventListener("scroll",  () => {
   }
 });
 window.onload = () => {
-  fetchData("Hitesh Chaudhary");
+  fetchData("Hitesh Choudhary");
 };
 async function fetchData(searchParam) {
   try {
@@ -90,7 +103,7 @@ async function fetchData(searchParam) {
     const result = await response.json();
     if (result) {
       updateUI(result.data);
-      data = [...data , ...result.data];
+      data = [...data, ...result.data];
       document.querySelector(".loader-div").style.visibility = "hidden";
     }
   } catch (error) {
@@ -106,16 +119,18 @@ function updateUI(data) {
   try {
     if (data && data.length) {
       data.forEach((dataItem) => {
-        if (!dataItem["channelThumbnail"]) return;
+        const {thumbnail , title,channelTitle,channelThumbnail,lengthText,richThumbnail,videoId} = dataItem;
+        if (!channelThumbnail || !thumbnail || !richThumbnail) return;
         const cloneCard = templateCard.content.cloneNode(true).children[0];
-        cloneCard.querySelector(".thumbImage").src = dataItem.thumbnail[0].url;
-        cloneCard.querySelector(".title").innerText = dataItem["title"];
-        cloneCard.querySelector(".channel-name").innerText =
-          dataItem["channelTitle"];
-        cloneCard.querySelector(".channelLogo").src =
-          dataItem.channelThumbnail[0].url;
-        cloneCard.querySelector(".timestamp").innerText =
-         dataItem["lengthText"] || "None";
+        cloneCard.querySelector(".thumbImage").src = thumbnail[0].url;
+        cloneCard.querySelector(".title").innerText = title;
+        cloneCard.querySelector(".channel-name").innerText = channelTitle
+        cloneCard.querySelector(".channelLogo").src = channelThumbnail[0].url;
+        cloneCard.querySelector(".timestamp").innerText = lengthText || "None"
+        // console.log(dataItem);
+          handleReview({richThumbnail , thumbnail} , cloneCard);
+          handleVideoClick(videoId,cloneCard);
+          // handlePlaylist(cloneCard);
         mainSection.append(cloneCard);
       });
     }
@@ -123,3 +138,30 @@ function updateUI(data) {
     console.log("Error Occured in updateUI : ", error.message);
   }
 }
+function handleVideoClick(videoId,cloneCard){
+  cloneCard.querySelector(".thumbImage").addEventListener("click" , debounce(function(){
+    window.open(`https://www.youtube.com/watch?v=${videoId}` , "_blank")
+    })
+  ,100)
+}
+function handleReview({richThumbnail,thumbnail},cloneCard){
+  cloneCard.addEventListener("mouseenter" , debounce(() => {
+    cloneCard.querySelector(".thumbImage").src = richThumbnail[0].url;
+  },100))
+  cloneCard.addEventListener("mouseleave" , debounce(() => {
+    cloneCard.querySelector(".thumbImage").src = thumbnail[0].url;
+  },100))
+}
+// Playlist : 
+function handlePlaylist(card){
+    card.querySelector(".addPlaylist").addEventListener("click" , () => {
+      if(playlist.indexOf(card) > -1){
+       return 
+      }
+      else{
+        playlist = [card , ...playlist];
+        localStorage.setItem("playlist" , JSON.stringify(card));
+        //  console.log(playlist);
+      }
+    })
+  }
