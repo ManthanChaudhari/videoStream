@@ -33,26 +33,34 @@ function handleSearch(e){
   }
 }
 
-// Feature Icons : 
-  homeList.addEventListener("click" , () => {
-    try{
-    if(homeIcon.classList.contains("active") && homeSpan.classList.contains("active")){
+// Button Functionalities :
+function handleHomeClick() {
+  try {
+    if (
+      homeIcon.classList.contains("active") &&
+      homeSpan.classList.contains("active")
+    ) {
       homeIcon.classList.remove("active");
       homeSpan.classList.remove("active");
       searchInput.value = "";
       updateUI(data);
-    }else return;
-  }catch(error){
-    console.log("featureIcon : " , )
+    } else {
+      return;
+    }
+  } catch (error) {
+    console.log("featureIcon : ");
   }
-  })
-  themeList.addEventListener("click" , () => {
-    container.classList.toggle("darkMode");
-    themeList.querySelector("i").classList.toggle("fa-sun")
-  })
+}
+homeList.addEventListener("click", handleHomeClick);
+// Theme Mode:
+function handleThemeMode() {
+  container.classList.toggle("darkMode");
+  themeList.querySelector("i").classList.toggle("fa-sun");
+}
+themeList.addEventListener("click", handleThemeMode);
 
 
-
+// Scroll Event
 window.addEventListener("scroll",  () => {
   const scrolledFromTop =
     document.body.scrollTop || document.documentElement.scrollTop;
