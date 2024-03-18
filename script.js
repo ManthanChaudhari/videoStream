@@ -1,10 +1,10 @@
 const progressBar = document.querySelector("#progressBar");
 const searchInput = document.querySelector(".searchVid");
-const themeList = document.querySelector(".theme");
 const homeList = document.querySelector(".home");
 const homeIcon = homeList.querySelector("i");
 const homeSpan = homeList.querySelector("span");
-const container = document.querySelector(".container");
+
+const playlistItem = document.querySelector(".playlist");
 let playlist = [];
 const url = "https://yt-api.p.rapidapi.com/search?query=";
 let data = [];
@@ -26,6 +26,10 @@ const debounce = (func, delay) => {
       }, delay);
   };
 };
+// Playlist link to the playlist.html
+playlistItem.addEventListener("click" , () => {
+  window.open("cart.html" , '_blank');
+})
 //handle operations
 function handleSearch(e) {
   try {
@@ -63,12 +67,7 @@ function handleHomeClick() {
   }
 }
 homeList.addEventListener("click", handleHomeClick);
-// Theme Mode:
-function handleThemeMode() {
-  container.classList.toggle("darkMode");
-  themeList.querySelector("i").classList.toggle("fa-sun");
-}
-themeList.addEventListener("click", handleThemeMode);
+
 
 
 
@@ -120,7 +119,7 @@ function updateUI(data) {
     if (data && data.length) {
       data.forEach((dataItem) => {
         const {thumbnail , title,channelTitle,channelThumbnail,lengthText,richThumbnail,videoId} = dataItem;
-        if (!channelThumbnail || !thumbnail || !richThumbnail) return;
+        if (!dataItem["channelThumbnail"] || !dataItem["thumbnail"] || !richThumbnail) return;
         const cloneCard = templateCard.content.cloneNode(true).children[0];
         cloneCard.querySelector(".thumbImage").src = thumbnail[0].url;
         cloneCard.querySelector(".title").innerText = title;
@@ -130,7 +129,7 @@ function updateUI(data) {
         // console.log(dataItem);
           handleReview({richThumbnail , thumbnail} , cloneCard);
           handleVideoClick(videoId,cloneCard);
-          // handlePlaylist(cloneCard);
+          handlePlaylist(cloneCard);
         mainSection.append(cloneCard);
       });
     }
@@ -145,23 +144,23 @@ function handleVideoClick(videoId,cloneCard){
   ,100)
 }
 function handleReview({richThumbnail,thumbnail},cloneCard){
-  cloneCard.addEventListener("mouseenter" , debounce(() => {
+  cloneCard.querySelector(".thumbImage").addEventListener("mouseenter" , debounce(() => {
     cloneCard.querySelector(".thumbImage").src = richThumbnail[0].url;
   },100))
-  cloneCard.addEventListener("mouseleave" , debounce(() => {
+  cloneCard.querySelector(".thumbImage").addEventListener("mouseleave" , debounce(() => {
     cloneCard.querySelector(".thumbImage").src = thumbnail[0].url;
   },100))
 }
 // Playlist : 
 function handlePlaylist(card){
     card.querySelector(".addPlaylist").addEventListener("click" , () => {
-      if(playlist.indexOf(card) > -1){
-       return 
+      if(playlist.indexOf(card.outerHTML) !== -1){
+       return
       }
       else{
-        playlist = [card , ...playlist];
-        localStorage.setItem("playlist" , JSON.stringify(card));
-        //  console.log(playlist);
+        playlist = [card.outerHTML , ...playlist];
+        localStorage.setItem("video-playlist" , JSON.stringify(playlist));
+        console.log(playlist);
       }
     })
   }
