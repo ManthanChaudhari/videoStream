@@ -156,7 +156,13 @@ main{
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
+.emptyMsg{
+    text-align: center;
+    font-size : 15px;
+    background-color: rgb(231, 8, 8);
+    color : white;
+    padding-block : 10px;
+}
 @media screen and (max-width : 1000px) {
     main{
          grid-template-columns: repeat(3,1fr);

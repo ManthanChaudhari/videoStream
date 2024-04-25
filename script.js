@@ -5,9 +5,9 @@ const homeIcon = homeList.querySelector("i");
 const homeSpan = homeList.querySelector("span");
 
 const playlistItem = document.querySelector(".playlist");
-let playlist = [];
+const localData = JSON.parse(localStorage.getItem("video-playlist")) || []
+let playlist = [...localData];
 const url = "https://yt-api.p.rapidapi.com/search?query=";
-let data = [];
 const options = {
   method: "GET",
   headers: {
@@ -28,7 +28,7 @@ const debounce = (func, delay) => {
 };
 // Playlist link to the playlist.html
 playlistItem.addEventListener("click" , () => {
-  window.open("cart.html" , '_blank');
+  window.open("cart.html" , '_self');
 })
 //handle operations
 function handleSearch(e) {
@@ -87,7 +87,7 @@ window.addEventListener("scroll", () => {
   }
 });
 window.onload = () => {
-  fetchData("Hitesh Choudhary");
+  fetchData("freecodecamp");
 };
 async function fetchData(searchParam) {
   try {
@@ -102,7 +102,6 @@ async function fetchData(searchParam) {
     const result = await response.json();
     if (result) {
       updateUI(result.data);
-      data = [...data, ...result.data];
       document.querySelector(".loader-div").style.visibility = "hidden";
     }
   } catch (error) {
@@ -126,10 +125,9 @@ function updateUI(data) {
         cloneCard.querySelector(".channel-name").innerText = channelTitle
         cloneCard.querySelector(".channelLogo").src = channelThumbnail[0].url;
         cloneCard.querySelector(".timestamp").innerText = lengthText || "None"
-        // console.log(dataItem);
           handleReview({richThumbnail , thumbnail} , cloneCard);
           handleVideoClick(videoId,cloneCard);
-          handlePlaylist(cloneCard);
+          handlePlaylist(dataItem,cloneCard);
         mainSection.append(cloneCard);
       });
     }
@@ -152,15 +150,20 @@ function handleReview({richThumbnail,thumbnail},cloneCard){
   },100))
 }
 // Playlist : 
-function handlePlaylist(card){
+function handlePlaylist(dataItem,card){
     card.querySelector(".addPlaylist").addEventListener("click" , () => {
-      if(playlist.indexOf(card.outerHTML) !== -1){
-       return
+      if(playlist.indexOf(dataItem) === -1){
+        console.log("Yes");
+        card.querySelector(".addPlaylist").innerHTML = "-"
+       playlist = [dataItem , ...playlist];
+       console.log(playlist);
+       localStorage.setItem("video-playlist" , JSON.stringify(playlist));
       }
-      else{
-        playlist = [card.outerHTML , ...playlist];
-        localStorage.setItem("video-playlist" , JSON.stringify(playlist));
-        console.log(playlist);
+      else{ 
+      card.querySelector(".addPlaylist").innerHTML = "+"
+      playlist = playlist.filter(video => video.videoId !== dataItem.videoId);
+      console.log(playlist);
+      localStorage.setItem("video-playlist" , JSON.stringify(playlist));
       }
     })
   }
