@@ -267,3 +267,6 @@ main{
     color : white;
     position: relative;
 }
+.container{
+    padding : 5px;
+}

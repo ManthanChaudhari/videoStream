@@ -61,13 +61,10 @@ function updateUI(data) {
     ,100)
   }
   function handlePlaylist(data , card){
-    card.querySelector(".addPlaylist").addEventListener("click" , (e) => {
-        // const indexOfCard = realPlaylist.indexOf(data);
+    card.querySelector(".addPlaylist").addEventListener("click" , () => {
         realPlaylist = [...realPlaylist.filter(video => video !== data)];
         localStorage.setItem("video-playlist" , JSON.stringify(realPlaylist));
-        // console.log(card);
         card.style.display = "none"
-        // console.log(realPlaylist);
         if(!realPlaylist.length){
             main_section.innerHTML = `<h1 class="emptyMsg">Playlist Section is Empty</h1>`;
         }
