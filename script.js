@@ -36,8 +36,8 @@ function handleSearch(e) {
     if (e.key === "Enter" && searchInput.value.length > 1) {
       let getInputValue = searchInput.value;
       setTimeout(() => {
-        homeIcon.classList.add("active");
-        homeSpan.classList.add("active");
+        homeIcon.classList.remove("active");
+        homeSpan.classList.remove("active");
         fetchData(getInputValue);
       }, 500);
     }
@@ -51,19 +51,16 @@ searchInput.addEventListener("keydown", handleSearch);
 // Button Functionalities :
 function handleHomeClick() {
   try {
-    if (
-      homeIcon.classList.contains("active") &&
-      homeSpan.classList.contains("active")
-    ) {
-      homeIcon.classList.remove("active");
-      homeSpan.classList.remove("active");
+    if (!homeIcon.classList.contains("active") && !homeSpan.classList.contains("active")) {
+      homeIcon.classList.add("active");
+      homeSpan.classList.add("active");
       searchInput.value = "";
-      updateUI(data);
+      fetchData("freecodecamp");
     } else {
       return;
     }
   } catch (error) {
-    console.log("featureIcon : ");
+    console.log("featureIcon : " , error);
   }
 }
 homeList.addEventListener("click", handleHomeClick);
@@ -88,6 +85,8 @@ window.addEventListener("scroll", () => {
 });
 window.onload = () => {
   fetchData("freecodecamp");
+  homeIcon.classList.add("active");
+  homeSpan.classList.add("active");
 };
 async function fetchData(searchParam) {
   try {
@@ -102,7 +101,9 @@ async function fetchData(searchParam) {
     const result = await response.json();
     if (result) {
       updateUI(result.data);
+      setTimeout(() => {
       document.querySelector(".loader-div").style.visibility = "hidden";
+      },500);
     }
   } catch (error) {
     console.log("Error Occured in fetchData() function : ", error.message);
